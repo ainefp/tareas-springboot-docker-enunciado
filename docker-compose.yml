@@ -34,7 +34,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB} 
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB} 
     ports: 
-      - "${SPRING_APP_PORT}:8080" 
+      - "${SPRING_APP_PORT}:9020" 
     networks: 
       - dwcs
     restart: unless-stopped 
