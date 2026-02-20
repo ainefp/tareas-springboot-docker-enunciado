@@ -40,3 +40,11 @@ logs/
 
 # Base de datos H2 (ficheiros locais)
 data/
+
+# Variables de entorno sensibles
+.env
+
+# Posibles datos de H2 (por si existían)
+*.mv.db
+*.h2.db
+/data-h2/
