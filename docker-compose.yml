@@ -1,0 +1,49 @@
+services: 
+  # Base de datos PostgreSQL 
+  db: 
+    image: postgres:15-alpine 
+    container_name: tareas-db 
+    environment: 
+      POSTGRES_DB: ${POSTGRES_DB} 
+      POSTGRES_USER: ${POSTGRES_USER} 
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
+    ports: 
+      - "${POSTGRES_PORT}:5432" 
+    volumes: 
+      - postgres_data:/var/lib/postgresql/data 
+    healthcheck: 
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tareasdb"] 
+      interval: 10s 
+      timeout: 5s 
+      retries: 5 
+    networks: 
+      - dwcs
+
+  # Aplicación Spring Boot 
+  app: 
+    build: 
+      context: . 
+      dockerfile: Dockerfile 
+    container_name: tareas-app 
+    depends_on: 
+      db: 
+        condition: service_healthy 
+    environment: 
+      POSTGRES_USER: ${POSTGRES_USER} 
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
+      POSTGRES_DB: ${POSTGRES_DB} 
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB} 
+    ports: 
+      - "${SPRING_APP_PORT}:8080" 
+    networks: 
+      - dwcs
+    restart: unless-stopped 
+
+# Volúmenes para persistencia de datos
+volumes: 
+  postgres_data: 
+
+# Rede para comunicación entre contenedores
+networks: 
+  dwcs:
+    driver: bridge
